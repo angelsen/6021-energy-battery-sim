@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import DutyCycle, OperatingSchedule
+from hps_EnergySim.forms import OperatingScheduleForm
 
 
 def duty_cycle_detail(request, duty_cycle_id):
@@ -9,6 +10,11 @@ def duty_cycle_detail(request, duty_cycle_id):
         "operating_loads"
     ).all()
     operating_loads = duty_cycle.operatingload_set.all()
+
+    for operating_schedule in operating_schedules:
+        form = OperatingScheduleForm(instance=operating_schedule)
+        form.fields['operating_loads'].widget.attrs['id'] = f'id_operating_loads_{operating_schedule.id}'
+        operating_schedule.form = form
 
     context = {
         "duty_cycle": duty_cycle,
