@@ -1,0 +1,4 @@
+{% for load in operating_loads.all %}
+    <option value="{{ load.pk }}"
+            {% if load in operating_schedule.operating_loads.all %}selected{% endif %}>{{ load.load_type }}</option>
+{% endfor %}
