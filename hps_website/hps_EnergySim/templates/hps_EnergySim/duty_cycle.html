@@ -31,9 +31,12 @@
                             {% if operating_schedule.location %}{{ operating_schedule.location.name }}{% endif %}
                         </td>
                         <td>
-                            <form method="post">
+                            <form hx-post="{% url 'operating_schedules_loads' operating_schedule.id duty_cycle.id %}"
+                                  hx-target="find .js-operating-load-select"
+                                  hx-trigger="myEvent"
+                                  hx-swap="none">
                                 {% csrf_token %}
-                                {{ operating_schedule.form.operating_loads }}
+                                {% include 'hps_EnergySim/partials/_select_loads.html' %}
                                 <!-- Other form fields and buttons as needed -->
                             </form>
                         </td>

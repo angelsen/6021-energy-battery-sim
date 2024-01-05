@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, HttpResponse
 from .models import DutyCycle, OperatingSchedule
 from hps_EnergySim.forms import OperatingScheduleForm
 
@@ -26,6 +26,24 @@ def duty_cycle_detail(request, duty_cycle_id):
 
 
 def operating_schedules_loads(request, duty_cycle_id, operating_schedule_id):
+    
+    operating_schedule = get_object_or_404(OperatingSchedule, pk=operating_schedule_id)
+    
+    if request.method == 'POST':
+        form = OperatingScheduleForm(request.POST, instance=operating_schedule)
+        if form.is_valid():
+            form.save()
+            return HttpResponse(status=204)
+        
+            # If using HTMX, you might want to return just the updated part
+            # For example, the updated select field or a success message
+            form.fields['operating_loads'].widget.attrs['id'] = f'id_operating_loads_{operating_schedule.id}'
+            operating_schedule.form = form
+
+            return render(request, "hps_EnergySim/partials/_select_loads.html", {
+                'operating_schedule': operating_schedule
+            })
+    
     new_operating_loads = request.GET.getlist("operating_loads[]")
 
     duty_cycle = get_object_or_404(
