@@ -1,0 +1,12 @@
+<td>{{ operating_schedule.start_time }}</td>
+<td>{{ operating_schedule.end_time }}</td>
+<td>{{ operating_schedule.location.name }}</td>
+<td>
+    <form hx-post="{% url 'operating_schedules_load' operating_schedule.id duty_cycle.id %}"
+          hx-trigger="select2Change">
+        {{ operating_schedule.form.operating_loads }}
+    </form>
+</td>
+<td>
+    <button class="btn btn-danger">Delete</button>
+</td>

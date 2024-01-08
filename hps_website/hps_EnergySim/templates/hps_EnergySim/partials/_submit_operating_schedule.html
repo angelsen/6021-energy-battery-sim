@@ -1,0 +1,16 @@
+{% if operating_schedule %}
+    <tbody hx-swap-oob="beforeend:#operating-schedules-table">
+        <tr>{% include 'hps_EnergySim/partials/_operating_schedule.html' %}</tr>
+    </tbody>
+{% endif %}
+<div id="operating-schedules-form-wrapper" class="container text-center">
+    <div class="row">
+        <div class="col-12 col-md">{{ operating_schedules.form.start_time }}</div>
+        <div class="col-12 col-md">{{ operating_schedules.form.end_time }}</div>
+        <div class="col-12 col-md">{{ operating_schedules.form.location }}</div>
+        <div class="col-12 col-md">{{ operating_schedules.form.operating_loads }}</div>
+        <div class="col-12 col-md">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</div>

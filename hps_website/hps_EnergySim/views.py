@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse
 from .models import DutyCycle, OperatingSchedule
-from hps_EnergySim.forms import OperatingScheduleForm
+from hps_EnergySim.forms import OperatingScheduleForm, OperatingScheduleLoadsForm
+from django.http import HttpResponseNotAllowed, HttpResponseBadRequest
 
 
 def duty_cycle_detail(request, duty_cycle_id):
@@ -12,9 +13,20 @@ def duty_cycle_detail(request, duty_cycle_id):
     operating_loads = duty_cycle.operatingload_set.all()
 
     for operating_schedule in operating_schedules:
-        form = OperatingScheduleForm(instance=operating_schedule)
-        form.fields['operating_loads'].widget.attrs['id'] = f'id_operating_loads_{operating_schedule.id}'
+        form = OperatingScheduleLoadsForm(instance=operating_schedule)
+        form.fields["operating_loads"].widget.attrs[
+            "id"
+        ] = f"id_operating_loads_{operating_schedule.id}"
         operating_schedule.form = form
+
+    form = OperatingScheduleForm()
+
+    last_schedule = operating_schedules.last()
+    if last_schedule is not None:
+        form.fields["start_time"].initial = last_schedule.end_time
+        form.fields["end_time"].initial = last_schedule.end_time
+
+    operating_schedules.form = form
 
     context = {
         "duty_cycle": duty_cycle,
@@ -25,42 +37,51 @@ def duty_cycle_detail(request, duty_cycle_id):
     return render(request, "hps_EnergySim/duty_cycle.html", context)
 
 
-def operating_schedules_loads(request, duty_cycle_id, operating_schedule_id):
-    
+def add_operating_schedule(request, duty_cycle_id):
+    duty_cycle = get_object_or_404(DutyCycle, pk=duty_cycle_id)
+
+    if request.method == "POST":
+        form = OperatingScheduleForm(request.POST)
+        if form.is_valid():
+            operating_schedule = form.save(commit=False)
+            operating_schedule.duty_cycle = duty_cycle
+            operating_schedule.save()
+            form.save_m2m()
+
+            form = OperatingScheduleLoadsForm(instance=operating_schedule)
+            form.fields["operating_loads"].widget.attrs[
+                "id"
+            ] = f"id_operating_loads_{operating_schedule.id}"
+            operating_schedule.form = form
+
+            form = OperatingScheduleForm()
+            form.fields["start_time"].initial = operating_schedule.end_time
+            form.fields["end_time"].initial = operating_schedule.end_time
+
+            operating_schedules = {"form": form}
+
+            context = {
+                "duty_cycle": duty_cycle,
+                "operating_schedules": operating_schedules,
+                "operating_schedule": operating_schedule,
+            }
+
+            return render(
+                request,
+                "hps_EnergySim/partials/_submit_operating_schedule.html",
+                context,
+            )
+    else:
+        return HttpResponseNotAllowed(["POST"])
+
+
+def operating_schedule_loads(request, duty_cycle_id, operating_schedule_id):
     operating_schedule = get_object_or_404(OperatingSchedule, pk=operating_schedule_id)
-    
-    if request.method == 'POST':
-        form = OperatingScheduleForm(request.POST, instance=operating_schedule)
+
+    if request.method == "POST":
+        form = OperatingScheduleLoadsForm(request.POST, instance=operating_schedule)
         if form.is_valid():
             form.save()
             return HttpResponse(status=204)
-        
-            # If using HTMX, you might want to return just the updated part
-            # For example, the updated select field or a success message
-            form.fields['operating_loads'].widget.attrs['id'] = f'id_operating_loads_{operating_schedule.id}'
-            operating_schedule.form = form
-
-            return render(request, "hps_EnergySim/partials/_select_loads.html", {
-                'operating_schedule': operating_schedule
-            })
-    
-    new_operating_loads = request.GET.getlist("operating_loads[]")
-
-    duty_cycle = get_object_or_404(
-        DutyCycle.objects.prefetch_related("operatingload_set"),
-        pk=duty_cycle_id,
-    )
-
-    operating_schedule = get_object_or_404(OperatingSchedule, pk=operating_schedule_id)
-
-    operating_schedule.operating_loads.set(new_operating_loads)
-
-    operating_loads = duty_cycle.operatingload_set.all()
-
-    context = {
-        "operating_schedule": operating_schedule,
-        "operating_loads": operating_loads,
-        #"duty_cycle": duty_cycle,
-    }
-
-    return render(request, "hps_EnergySim/partials/_select_loads.html", context)
+    else:
+        return HttpResponseNotAllowed(["POST"])

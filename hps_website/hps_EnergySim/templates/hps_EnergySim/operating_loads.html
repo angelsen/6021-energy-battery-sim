@@ -1,0 +1,8 @@
+<h2>Operating Loads</h2>
+<ul>
+    {% for operating_load in operating_loads %}
+        <li>{{ operating_load.load_type }}</li>
+    {% empty %}
+        <li>No operating_loads available.</li>
+    {% endfor %}
+</ul>

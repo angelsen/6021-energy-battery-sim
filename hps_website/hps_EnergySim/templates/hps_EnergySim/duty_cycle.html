@@ -3,56 +3,7 @@
 {% block content %}
     <h1>Duty Cycle: {{ duty_cycle.name }}</h1>
     <p>{{ duty_cycle.description }}</p>
-    <h2>Locations</h2>
-    <ul>
-        {% for location in locations %}
-            <li>{{ location.name }}</li>
-        {% empty %}
-            <li>No locations available.</li>
-        {% endfor %}
-    </ul>
-    <h2>Operating Schedules</h2>
-    {% if operating_schedules %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Location</th>
-                    <th>Operating Loads</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for operating_schedule in operating_schedules %}
-                    <tr>
-                        <td>{{ operating_schedule.start_time }}</td>
-                        <td>{{ operating_schedule.end_time }}</td>
-                        <td>
-                            {% if operating_schedule.location %}{{ operating_schedule.location.name }}{% endif %}
-                        </td>
-                        <td>
-                            <form hx-post="{% url 'operating_schedules_loads' operating_schedule.id duty_cycle.id %}"
-                                  hx-target="find .js-operating-load-select"
-                                  hx-trigger="myEvent"
-                                  hx-swap="none">
-                                {% csrf_token %}
-                                {% include 'hps_EnergySim/partials/_select_loads.html' %}
-                                <!-- Other form fields and buttons as needed -->
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No operating schedules available.</p>
-    {% endif %}
-    <h2>Operating Loads</h2>
-    <ul>
-        {% for operating_load in operating_loads %}
-            <li>{{ operating_load.load_type }}</li>
-        {% empty %}
-            <li>No operating_loads available.</li>
-        {% endfor %}
-    </ul>
+    {% include 'hps_EnergySim/locations.html' %}
+    {% include 'hps_EnergySim/operating_schedules.html' %}
+    {% include 'hps_EnergySim/operating_loads.html' %}
 {% endblock %}
