@@ -1,0 +1,13 @@
+{% if location %}
+    <tbody hx-swap-oob="beforeend:#locations-table">
+        <tr>{% include 'hps_EnergySim/partials/_location.html' %}</tr>
+    </tbody>
+{% endif %}
+<div id="locations-form-wrapper" class="container text-center">
+    <div class="row">
+        <div class="col-12 col-md">{{ locations.form.name }}</div>
+        <div class="col-12 col-md">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+</div>

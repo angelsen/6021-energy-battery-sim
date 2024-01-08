@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse
 from ..models import DutyCycle, OperatingSchedule
-from hps_EnergySim.forms import OperatingScheduleForm, OperatingScheduleLoadsForm
+from hps_EnergySim.forms import OperatingScheduleForm, OperatingScheduleLoadsForm, LocationForm
 from django.http import HttpResponseNotAllowed, HttpResponseBadRequest
 
 
@@ -20,13 +20,14 @@ def duty_cycle_detail(request, duty_cycle_id):
         operating_schedule.form = form
 
     form = OperatingScheduleForm()
-
     last_schedule = operating_schedules.last()
     if last_schedule is not None:
         form.fields["start_time"].initial = last_schedule.end_time
         form.fields["end_time"].initial = last_schedule.end_time
-
     operating_schedules.form = form
+
+    form =  LocationForm()
+    locations.form = form
 
     context = {
         "duty_cycle": duty_cycle,

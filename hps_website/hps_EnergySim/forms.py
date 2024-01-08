@@ -1,8 +1,13 @@
 # forms.py
 from django import forms
 from django.forms.widgets import DateTimeInput
-from .models import OperatingLoad, OperatingSchedule
+from .models import OperatingLoad, OperatingSchedule,  Location
 
+class LocationForm(forms.ModelForm):
+
+    class Meta:
+        model = Location
+        fields = ["name"]
 
 class OperatingScheduleForm(forms.ModelForm):
     operating_loads = forms.ModelMultipleChoiceField(

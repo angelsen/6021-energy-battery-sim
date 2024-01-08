@@ -1,8 +1,20 @@
 <h2>Locations</h2>
-<ul>
-    {% for location in locations %}
-        <li>{{ location.name }}</li>
-    {% empty %}
-        <li>No locations available.</li>
-    {% endfor %}
-</ul>
+<div class="table-responsive-lg">
+    <table class="table" style="min-width: 720px;">
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody id="locations-table">
+            {% for location in locations %}
+                <tr>{% include 'hps_EnergySim/partials/_location.html' %}</tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<form class="mt-3 mb-3 "
+      hx-post="{% url 'add_location' duty_cycle.id %}"
+      hx-on::after-settle="initializeSelect2()">
+    {% include 'hps_EnergySim/partials/_submit_location.html' %}
+</form>

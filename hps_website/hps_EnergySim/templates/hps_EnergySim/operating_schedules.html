@@ -44,7 +44,7 @@
          tabindex="0">
         <!-- Form 1 -->
         <form class="mt-3 mb-3 "
-              hx-post="{% url 'operating_schedule' duty_cycle.id %}"
+              hx-post="{% url 'add_operating_schedule' duty_cycle.id %}"
               hx-on::after-settle="initializeSelect2()">
             {% include 'hps_EnergySim/partials/_submit_operating_schedule.html' %}
         </form>
