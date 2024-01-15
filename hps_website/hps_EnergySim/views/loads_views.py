@@ -1,7 +1,21 @@
 from django.shortcuts import render, get_object_or_404
 from ..models import DutyCycle
 from hps_EnergySim.forms import OperatingLoadForm
+from django.http import HttpResponse
 from django_htmx.http import trigger_client_event
+
+
+def delete_operating_load(request, duty_cycle_id, load_id):
+    duty_cycle = get_object_or_404(DutyCycle, pk=duty_cycle_id)
+
+    if request.method == "DELETE":
+        load = get_object_or_404(duty_cycle.operatingload_set, pk=load_id)
+        load.delete()
+
+        response = HttpResponse(status=204)
+        trigger_client_event(response, "update-operating_schedules", {})
+        return response
+
 
 def operating_loads(request, duty_cycle_id):
     duty_cycle = get_object_or_404(DutyCycle, pk=duty_cycle_id)
@@ -30,15 +44,15 @@ def operating_loads(request, duty_cycle_id):
             )
             trigger_client_event(response, "update-operating_schedules", {})
             return response
-        
+
     operating_loads = duty_cycle.operatingload_set.all()
 
     form = OperatingLoadForm
     operating_loads.form = form
-    
+
     context = {
         "duty_cycle": duty_cycle,
         "operating_loads": operating_loads,
     }
 
-    return render(request, 'hps_EnergySim/operating_loads.html', context)
+    return render(request, "hps_EnergySim/operating_loads.html", context)

@@ -1,5 +1,10 @@
 <td>{{ operating_load.load_type }}</td>
 <td>{{ operating_load.load_value }}</td>
 <td>
-    <button id="delete:{{ operating_load.pk }}" class="btn btn-danger">Delete</button>
+    <form hx-delete="{% url 'delete_operating_load' duty_cycle.id operating_load.id %}"
+          hx-target="#operating_loads_form"
+          hx-confirm="Are you sure you want to delete this operating load?"
+          hx-on::after-request="$(this).closest('tr').remove();">
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
 </td>

@@ -22,11 +22,18 @@ urlpatterns = [
         "duty-cycles/<int:duty_cycle_id>/locations", views.locations, name="locations"
     ),
     path(
-        "duty-cycles/<int:duty_cycle_id>/locations/<int:location_id>", views.delete_location, name="delete_location"
+        "duty-cycles/<int:duty_cycle_id>/locations/<int:location_id>",
+        views.delete_location,
+        name="delete_location",
     ),
     path(
         "duty-cycles/<int:duty_cycle_id>/operating-loads",
         views.operating_loads,
         name="operating_loads",
+    ),
+    path(
+        "duty-cycles/<int:duty_cycle_id>/operating-loads/<int:load_id>",
+        views.delete_operating_load,
+        name="delete_operating_load",
     ),
 ]
