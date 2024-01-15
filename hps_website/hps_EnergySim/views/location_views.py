@@ -1,12 +1,20 @@
-from django.shortcuts import render, get_object_or_404, HttpResponse
-from ..models import DutyCycle, OperatingSchedule
-from hps_EnergySim.forms import (
-    OperatingScheduleForm,
-    OperatingScheduleLoadsForm,
-    LocationForm,
-)
-from django.http import HttpResponseNotAllowed, HttpResponseBadRequest
+from django.shortcuts import render, get_object_or_404
+from ..models import DutyCycle
+from hps_EnergySim.forms import LocationForm
+from django.http import HttpResponseNotAllowed, HttpResponse
 from django_htmx.http import trigger_client_event
+
+
+def delete_location(request, duty_cycle_id, location_id):
+    duty_cycle = get_object_or_404(DutyCycle, pk=duty_cycle_id)
+
+    if request.method == "DELETE":
+        location = get_object_or_404(duty_cycle.location_set, pk=location_id)
+        location.delete()
+
+        response = HttpResponse(status=204)
+        trigger_client_event(response, "update-operating_schedules", {})
+        return response
 
 
 def locations(request, duty_cycle_id):
