@@ -1,8 +1,21 @@
 <h2>Operating Loads</h2>
-<ul>
-    {% for operating_load in operating_loads %}
-        <li>{{ operating_load.load_type }}</li>
-    {% empty %}
-        <li>No operating_loads available.</li>
-    {% endfor %}
-</ul>
+<div class="table-responsive-lg">
+    <table class="table" style="min-width: 720px;">
+        <thead>
+            <tr>
+                <th>Load type</th>
+                <th>Load value</th>
+            </tr>
+        </thead>
+        <tbody id="operating-loads-table">
+            {% for operating_load in operating_loads %}
+                <tr>{% include 'hps_EnergySim/partials/_operating_loads.html' %}</tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<form class="mt-3 mb-3 "
+      hx-post="{% url 'operating_loads' duty_cycle.id %}"
+      hx-on::after-settle="initializeSelect2()">
+    {% include 'hps_EnergySim/partials/_submit_operating_loads.html' %}
+</form>

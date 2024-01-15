@@ -14,7 +14,7 @@
     </table>
 </div>
 <form class="mt-3 mb-3 "
-      hx-post="{% url 'add_location' duty_cycle.id %}"
+      hx-post="{% url 'locations' duty_cycle.id %}"
       hx-on::after-settle="initializeSelect2()">
     {% include 'hps_EnergySim/partials/_submit_location.html' %}
 </form>

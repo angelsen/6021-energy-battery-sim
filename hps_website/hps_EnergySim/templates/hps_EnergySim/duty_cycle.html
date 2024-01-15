@@ -3,7 +3,29 @@
 {% block content %}
     <h1>Duty Cycle: {{ duty_cycle.name }}</h1>
     <p>{{ duty_cycle.description }}</p>
-    {% include 'hps_EnergySim/locations.html' %}
-    {% include 'hps_EnergySim/operating_schedules.html' %}
-    {% include 'hps_EnergySim/operating_loads.html' %}
+    <div class="d-flex align-items-start">
+        <div class="nav flex-column nav-pills me-3"
+             id="v-pills-tab"
+             role="tablist"
+             aria-orientation="vertical">
+            <button class="nav-link active"
+                    hx-get="{% url 'locations' duty_cycle.id %}"
+                    hx-target="#tab-content"
+                    hx-on:click="toggleActiveNav(this)"
+                    type="button">Locations</button>
+            <button class="nav-link"
+                    hx-get="{% url 'operating_schedules' duty_cycle.id %}"
+                    hx-target="#tab-content"
+                    hx-on::after-request="initializeSelect2()"
+                    hx-on:click="toggleActiveNav(this)"
+                    hx-on::after-settle="initializeSelect2()"
+                    type="button">Schedules</button>
+            <button class="nav-link"
+                    hx-get="{% url 'operating_loads' duty_cycle.id %}"
+                    hx-target="#tab-content"
+                    hx-on:click="toggleActiveNav(this)"
+                    type="button">Loads</button>
+        </div>
+        <div id="tab-content" class="tab-content">{% include 'hps_EnergySim/locations.html' %}</div>
+    </div>
 {% endblock %}

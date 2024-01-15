@@ -8,5 +8,10 @@
     </form>
 </td>
 <td>
-    <button class="btn btn-danger">Delete</button>
+    <form hx-delete="{% url 'delete_operating_schedules' duty_cycle.id operating_schedule.id %}"
+          hx-target="#operating_schedules_form"
+          hx-confirm="Are you sure you want to delete this schedule?"
+          hx-on::after-request="$(this).closest('tr').remove();">
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
 </td>
